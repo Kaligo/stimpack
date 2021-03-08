@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.version = Stimpack::VERSION
   spec.license = "MIT"
 
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
+  spec.required_ruby_version = Gem::Requirement.new(">= 3.0.0")
 
   spec.name    = "stimpack"
   spec.authors = ["Ted Johansson"]

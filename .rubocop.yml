@@ -1,0 +1,20 @@
+AllCops:
+  TargetRubyVersion: 3.0
+  NewCops: "enable"
+  Exclude:
+    - "bin/**/*"
+    - "Gemfile"
+    - "Rakefile"
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+
+Style/Documentation:
+  Enabled: false
+
+Style/LambdaCall:
+  EnforcedStyle: braces
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
