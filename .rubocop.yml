@@ -5,6 +5,7 @@ AllCops:
     - "bin/**/*"
     - "Gemfile"
     - "Rakefile"
+  SuggestExtensions: false
 
 Metrics/BlockLength:
   Exclude:

@@ -29,6 +29,10 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{\Abin/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
+  # TODO: Drop ActiveSupport dependency.
+  #
+  spec.add_dependency "activesupport", "~> 6.1"
+
   spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "rubocop", "~> 1.11"
 end
