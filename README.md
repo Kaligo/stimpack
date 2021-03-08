@@ -9,6 +9,7 @@ and behaviour.
 
 - [FunctionalObject](#functionalobject)
 - [OptionsDeclaration](#optionsdeclaration)
+- [ResultMonad](#resultmonad)
 
 ## FunctionalObject
 
@@ -84,3 +85,58 @@ When declaring an option, the following configuration kets are available:
 | `default`        | `any`        | `nil`   | Can be a literal or a callable object. Arrays and hashes will not be shared across instances. |
 | `required`       | `boolean`    | `true`  | |
 | `private_reader` | `boolean`    | `true`  | |
+
+## ResultMonad
+
+A mixin that is used to return structured result objects from a method. The
+result will be either `successful` or `failed`, and the caller can take
+whatever action they consider appropriate based on the outcome.
+
+From within the class, the instance methods `#success` and `#error`,
+respectively, can be used to construct the result object.
+
+**Example:**
+
+```ruby
+class Foo
+  include Stimpack::ResultMonad
+
+  blank_result
+
+  def call
+    return error(errors: "Whoops!") if operation_failed?
+
+    success
+  end
+end
+```
+
+Successful results can optionally be parameterized with additional data using
+the `#result` method. The declared result key will be required to be passed to
+the `#success` constructor method.
+
+**Example:**
+
+```ruby
+class Foo
+  include Stimpack::ResultMonad
+
+  result :bar
+
+  def call
+    success(bar: "It worked!")
+  end
+end
+```
+
+Consumers of the class can then decide what to do based on the outcome:
+
+```ruby
+result = Foo.new.()
+
+if result.successful?
+  result.bar
+else
+  result.errors
+end
+```
