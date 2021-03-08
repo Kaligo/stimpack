@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Add `ResultMonad` mixin.
+
 ## 0.2.0
 
 - Add `OptionsDeclaration` mixin.
