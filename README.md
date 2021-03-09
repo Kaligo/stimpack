@@ -7,9 +7,46 @@ and behaviour.
 
 ## Table of Contents
 
+- [EventSource](#eventsource)
 - [FunctionalObject](#functionalobject)
 - [OptionsDeclaration](#optionsdeclaration)
 - [ResultMonad](#resultmonad)
+
+## EventSource
+
+A mixin that turns the class into an event emitter with which others can
+register listeners. The class can then use `#emit` to broadcast events to any
+listensers.
+
+**Example:**
+
+Given the following event source:
+
+```ruby
+class Foo
+  include Stimpack::EventSource
+
+  def bar
+    emit(:bar, { message: "Hello, world!" })
+  end
+end
+```
+
+we can register a callback to listen for events from another part of our
+application, and we will receive an event object when the event is emitted:
+
+```ruby
+Foo.on(:bar) do |event|
+  puts event.message
+end
+
+Foo.new.bar
+#=> "Hello, world!"
+```
+
+*Note: Callbacks are invoked synchronously in the same thread, so don't use
+this to perform long-running tasks. You can use the event listener to schedule
+a background job, though!*
 
 ## FunctionalObject
 
