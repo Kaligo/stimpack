@@ -1,10 +1,20 @@
 # Changelog
 
+## 0.4.0
+
+### New features
+
+- Add `before_success` and `before_error` callbacks to `ResultMonad`.
+
 ## 0.3.0
+
+### New features
 
 - Add `ResultMonad` mixin.
 
 ## 0.2.0
+
+### New features
 
 - Add `OptionsDeclaration` mixin.
 

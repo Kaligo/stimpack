@@ -16,6 +16,10 @@ RSpec.describe Stimpack::ResultMonad do
       def error_result(errors:)
         error(errors: errors)
       end
+
+      def self.to_s
+        "Foo"
+      end
     end
   end
 
@@ -81,6 +85,36 @@ RSpec.describe Stimpack::ResultMonad do
     end
   end
 
+  describe ".before_success" do
+    let(:instance) { service.new }
+
+    before do
+      allow(instance).to receive(:inspect)
+
+      service.blank_result
+      service.before_success { inspect }
+
+      instance.success_result
+    end
+
+    it { expect(instance).to have_received(:inspect).once }
+  end
+
+  describe ".before_error" do
+    let(:instance) { service.new }
+
+    before do
+      allow(instance).to receive(:inspect)
+
+      service.blank_result
+      service.before_error { inspect }
+
+      instance.error_result(errors: ["foo"])
+    end
+
+    it { expect(instance).to have_received(:inspect).once }
+  end
+
   describe "#success" do
     before { service.result(:foo) }
 
@@ -102,6 +136,6 @@ RSpec.describe Stimpack::ResultMonad do
     let(:instance) { service.new }
 
     it { expect(instance.error_result(errors: ["foo"])).to be_failed }
-    it { expect(instance.error_result(errors: ["foo"]).errors).to eq ["foo"] }
+    it { expect(instance.error_result(errors: ["foo"]).errors).to eq(["foo"]) }
   end
 end
