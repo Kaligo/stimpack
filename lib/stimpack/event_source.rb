@@ -27,6 +27,23 @@ module Stimpack
       end
     end
 
+    class Listener
+      def initialize(raise_errors:, &block)
+        @block = block
+        @raise_errors = raise_errors
+      end
+
+      def call(...)
+        block.(...)
+      rescue StandardError => e
+        raise e if raise_errors
+      end
+
+      private
+
+      attr_reader :raise_errors, :block
+    end
+
     module ClassMethods
       def self.extended(klass)
         klass.class_eval do
@@ -38,8 +55,10 @@ module Stimpack
         end
       end
 
-      def on(event_name, &block)
-        event_listeners["#{self}.#{event_name}"] << block
+      def on(event_name, raise_errors: false, &block)
+        listener = Listener.new(raise_errors: raise_errors, &block)
+
+        event_listeners["#{self}.#{event_name}"] << listener
       end
     end
 

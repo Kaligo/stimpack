@@ -48,6 +48,25 @@ Foo.new.bar
 this to perform long-running tasks. You can use the event listener to schedule
 a background job, though!*
 
+### Error handling
+
+By default, all errors that occur in a callback are rescued unhandled. This is
+intentional and by design, since most of the time, we don't want outside code
+invoked by event listener to be able to interrupt the main flow.
+
+If you decide that you want to handle these errors yourself, you can configure
+the listener to re-raise any errors when you register it.
+
+**Example:**
+
+```ruby
+Foo.on(:bar, raise_errors: true) do |event|
+  puts event.message
+rescue StandardError => error
+  log_error(error.message)
+end
+```
+
 ## FunctionalObject
 
 A simple mixin that provides a shorthand notation for instantiating and
