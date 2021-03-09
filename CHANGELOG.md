@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.1
+
+### Bug fixes
+
+- Require `EventSource` by default.
+
 ## 0.5.0
 
 ### New features
