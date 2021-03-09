@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.2
+
+### New features
+
+- Add `raise_errors` option to `EventSource.on` method.
+
 ## 0.5.1
 
 ### Bug fixes
