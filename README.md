@@ -140,3 +140,33 @@ else
   result.errors
 end
 ```
+
+### Callbacks
+
+The `ResultMonad` mixin exposes two callbacks, `before_success` and
+`before_error`. These can be configured by passing a block to them in the
+class body.
+
+*Note: Callbacks are not inherited, and declaring multiple callbacks in the
+same class will overwrite the previous one.*
+
+**Example:**
+
+```ruby
+class Foo
+  include Stimpack::ResultMonad
+
+  before_success do
+    log_tracking_data
+  end
+
+  private
+
+  def log_tracking_data
+    # ...
+  end
+end
+```
+
+*Note: The block is evaluated in the context of the instance, so you can call
+any instance methods from inside the block.*
