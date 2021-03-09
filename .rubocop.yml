@@ -7,6 +7,9 @@ AllCops:
     - "Rakefile"
   SuggestExtensions: false
 
+Lint/EmptyBlock:
+  Enabled: false
+
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
