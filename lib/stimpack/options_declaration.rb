@@ -53,7 +53,7 @@ module Stimpack
       #     option :user
       #   end
       #
-      def option(*identifiers, required: true, default: nil, private_reader: true) # rubocop:disable Metrics/MethodLength
+      def option(*identifiers, required: true, default: Option::MISSING_VALUE, private_reader: true) # rubocop:disable Metrics/MethodLength
         self.options_configuration = options_configuration.merge(
           identifiers.map do |identifier|
             [
@@ -86,6 +86,10 @@ module Stimpack
 
       def optional_options
         options_configuration.select { |_, option| option.optional? }.keys
+      end
+
+      def default_options
+        options_configuration.select { |_, option| option.default? }.keys
       end
     end
 
@@ -146,25 +150,37 @@ module Stimpack
     end
 
     class Option
+      MISSING_VALUE = "__missing__"
+
       def initialize(name, required:, default:)
         @name = name
         @default = default
         @required = required
       end
 
-      attr_reader :name, :default, :required
+      attr_reader :name
 
       def default_value
+        return nil unless default?
+
         default.respond_to?(:call) ? default.() : default
       end
 
       def required?
-        required && default.nil?
+        required && !default?
       end
 
       def optional?
         !required?
       end
+
+      def default?
+        default != MISSING_VALUE
+      end
+
+      private
+
+      attr_reader :default, :required
     end
   end
 end
