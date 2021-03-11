@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.3
+
+### New features
+
+- Allow `default: nil` to be used without needing `required: false` for the
+  `OptionsDeclaration.option` method.
+
 ## 0.5.2
 
 ### New features

@@ -13,12 +13,13 @@ RSpec.describe Stimpack::OptionsDeclaration do
       option :bar, required: false
       option :baz, private_reader: false
       option :qux, default: "Foo"
+      option :quuz, default: nil
       option :quux, default: -> { "Bar" }
     end
   end
 
   describe ".option" do
-    it { expect(service.options_configuration.size).to eq(5) }
+    it { expect(service.options_configuration.size).to eq(6) }
     it { expect(service.options_configuration.values).to all(be_a(described_class::Option)) }
 
     describe "private_reader (option)" do
@@ -26,12 +27,12 @@ RSpec.describe Stimpack::OptionsDeclaration do
       let(:private_instance_methods) { service.private_instance_methods(false) }
 
       it { expect(public_instance_methods).to contain_exactly(:baz) }
-      it { expect(private_instance_methods).to contain_exactly(:foo, :bar, :qux, :quux) }
+      it { expect(private_instance_methods).to contain_exactly(:foo, :bar, :qux, :quux, :quuz) }
     end
   end
 
   describe ".options" do
-    it { expect(service.options).to contain_exactly(:foo, :bar, :baz, :qux, :quux) }
+    it { expect(service.options).to contain_exactly(:foo, :bar, :baz, :qux, :quux, :quuz) }
   end
 
   describe ".required_options" do
@@ -39,7 +40,11 @@ RSpec.describe Stimpack::OptionsDeclaration do
   end
 
   describe ".optional_options" do
-    it { expect(service.optional_options).to contain_exactly(:bar, :qux, :quux) }
+    it { expect(service.optional_options).to contain_exactly(:bar, :qux, :quux, :quuz) }
+  end
+
+  describe ".default_options" do
+    it { expect(service.default_options).to contain_exactly(:qux, :quux, :quuz) }
   end
 
   describe "#initialize" do
@@ -86,6 +91,7 @@ RSpec.describe Stimpack::OptionsDeclaration do
       context "when default option is assigned by omission" do
         it { expect(instance.send(:qux)).to eq("Foo") }
         it { expect(instance.send(:quux)).to eq("Bar") }
+        it { expect(instance.send(:quuz)).to eq(nil) }
       end
     end
   end
