@@ -4,6 +4,9 @@
 #
 require "active_support/core_ext/class/attribute"
 
+require_relative "./options_declaration/initializer"
+require_relative "./options_declaration/option"
+
 module Stimpack
   # This mixin is used to augment classes with a DSL for declaring keyword
   # arguments. It is used to cut down on noise for a common initialization
@@ -93,94 +96,9 @@ module Stimpack
       end
     end
 
-    # Injects an initializer that assigns options and proxies the call to any
-    # custom initializer _without_ the declared options included in the call.
-    #
-    module OptionsInitializer
-      def initialize(*_args, **options)
-        assigner = OptionsAssigner.new(self, options)
-        assigner.assign_options!
-        yield self if block_given?
-      end
-
-      class OptionsAssigner
-        def initialize(service, options)
-          @service = service
-          @options = options
-        end
-
-        def assign_options!
-          check_for_missing_options!
-
-          service.class.options_configuration.each_value { |o| assign_option(o) }
-        end
-
-        private
-
-        attr_reader :service, :options
-
-        def check_for_missing_options!
-          raise(ArgumentError, <<~ERROR) unless missing_options.empty?
-            Missing required options: #{missing_options.join(', ')}
-          ERROR
-        end
-
-        def assign_option(option)
-          assigned_value = options[option.name]
-
-          service.instance_variable_set(
-            "@#{option.name}",
-            assigned_value.nil? ? option.default_value : assigned_value
-          )
-        end
-
-        def missing_options
-          required_options - options.keys
-        end
-
-        def required_options
-          service.class.required_options
-        end
-      end
-    end
-
     def self.included(klass)
       klass.extend(ClassMethods)
-      klass.include(OptionsInitializer)
-    end
-
-    class Option
-      MISSING_VALUE = "__missing__"
-
-      def initialize(name, required:, default:)
-        @name = name
-        @default = default
-        @required = required
-      end
-
-      attr_reader :name
-
-      def default_value
-        return nil unless default?
-
-        default.respond_to?(:call) ? default.() : default
-      end
-
-      def required?
-        required && !default?
-      end
-
-      def optional?
-        !required?
-      end
-
-      def default?
-        default != MISSING_VALUE
-      end
-
-      private
-
-      attr_reader :default, :required
+      klass.include(Initializer)
     end
   end
 end

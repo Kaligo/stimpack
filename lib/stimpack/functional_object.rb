@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 module Stimpack
+  # This mixin adds a `#call` class method which instantiates an object and
+  # proxies arguments to the `#call` method. This allows for shorthand
+  # invocation, e.g.:
+  #
+  #   AccruePoints.(user: user, amount: amount)
+  #
+  # which shortens code and aids when stubbing results in tests.
+  #
   module FunctionalObject
     module ClassMethods
-      # Instantiates an object and proxies arguments to the `#call` method.
-      # This allows for shorthand invocation, e.g.:
-      #
-      #   AccruePoints.(user: user, amount: amount)
-      #
-      # which shortens code and aids in stubbing responses.
-      #
       def call(...)
         new(...).()
       end

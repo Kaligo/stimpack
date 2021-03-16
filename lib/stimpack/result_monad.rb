@@ -1,24 +1,59 @@
 # frozen_string_literal: true
 
-# TODO: Remove dependency on ActiveSupport.
-#
-require "active_support/core_ext/class/attribute"
-
 module Stimpack
+  # This mixin augments its consumer class with methods to return structured
+  # result objects containing either a declared result key or errors. These
+  # can be inspected at the call site to decide what to do next. Serves as an
+  # option to using exceptions and mixed return types.
+  #
+  # Example:
+  #
+  #   class Checkout
+  #     include ResultMonad
+  #
+  #     result :order
+  #
+  #     def call
+  #       if checkout.sussessful?
+  #         success(order: checkout.order)
+  #       else
+  #         error(errors: checkout.errors)
+  #       end
+  #     end
+  #   end
+  #
+  # It also supports declaring callbacks which will be invoked when the
+  # relevant conditions are met, e.g. when the call succeeds or errors.
+  #
+  # Example:
+  #
+  #   class Checkout
+  #     include ResultMonad
+  #
+  #     before_success do
+  #       # ...
+  #     end
+  #
+  #     before_error do
+  #       # ...
+  #     end
+  #   end
+  #
   module ResultMonad
     class IncompatibleResultError < ArgumentError; end
 
     module ClassMethods
       # Callback registry that stores a mapping of callbacks for all concrete
-      # service classes. (Key is class name + event name, values are blocks.)
+      # service classes. The registry is a hash that lives in the base class,
+      # where the keys are `class_name.event_name`, and the values are blocks.
       #
       def self.extended(klass)
         klass.class_eval do
-          # TODO: Remove dependency on ActiveSupport.
-          #
-          class_attribute :callbacks,
-                          instance_accessor: false,
-                          default: Hash.new { |h, k| h[k] = [] }
+          @callbacks = Hash.new { |h, k| h[k] = [] }
+
+          class << self
+            attr_reader :callbacks
+          end
         end
       end
 
