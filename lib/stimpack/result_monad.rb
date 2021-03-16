@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "./result_monad/result"
+
 module Stimpack
   # This mixin augments its consumer class with methods to return structured
   # result objects containing either a declared result key or errors. These
@@ -104,17 +106,9 @@ module Stimpack
       protected
 
       def build_result_struct(attribute = nil)
-        attributes = [:errors, attribute].compact
+        attributes = [:klass, :errors, attribute].compact
 
-        @result_struct = Struct.new(*attributes, keyword_init: true) do
-          def successful?
-            errors.nil?
-          end
-
-          def failed?
-            !successful?
-          end
-        end.freeze
+        @result_struct = Result.new(*attributes, keyword_init: true).freeze
       end
 
       private
@@ -143,7 +137,7 @@ module Stimpack
 
       run_callback(:success)
 
-      self.class.result_struct.new(**result_attributes)
+      self.class.result_struct.new(klass: self.class, **result_attributes)
     end
 
     # To be called from within an object when its invocation fails.
@@ -151,7 +145,7 @@ module Stimpack
     def error(errors:)
       run_callback(:error)
 
-      self.class.result_struct.new(errors: errors)
+      self.class.result_struct.new(klass: self.class, errors: errors)
     end
     alias_method :error_with, :error
 
