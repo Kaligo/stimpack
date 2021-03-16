@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.4
+
+### Maintenance
+
+- Split child classes of `EventSource` and `OptionsDeclaration` into own files.
+- Add a bunch more inline documentation for the mixins.
+- Remove `EventSource` and `ResultMonad` dependencies on ActiveSupport.
+
 ## 0.5.3
 
 ### New features

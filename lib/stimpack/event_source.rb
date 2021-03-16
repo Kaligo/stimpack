@@ -1,57 +1,38 @@
 # frozen_string_literal: true
 
-# TODO: Remove dependency on ActiveSupport.
-#
-require "active_support/core_ext/class/attribute"
+require_relative "./event_source/event"
+require_relative "./event_source/listener"
 
 module Stimpack
+  # This mixin turns the class into an event subject with which observers can
+  # register callbacks to be executed in response to certain events.
+  #
+  # Example:
+  #
+  #   class Checkout
+  #     include EventSource
+  #
+  #     def call
+  #       emit(:error, { message: "Oops!" })
+  #     end
+  #   end
+  #
+  #   Checkout.on(:error) { |event| Appsignal.report(event.message) }
+  #
   module EventSource
-    class Event
-      def initialize(name, data = {})
-        @name = name
-        @data = data
-      end
-
-      attr_reader :name, :data
-
-      def respond_to_missing?(method)
-        data.key?(method) || super
-      end
-
-      def method_missing(method, *arguments, &block)
-        if data.key?(method)
-          data[method]
-        else
-          super
-        end
-      end
-    end
-
-    class Listener
-      def initialize(raise_errors:, &block)
-        @block = block
-        @raise_errors = raise_errors
-      end
-
-      def call(...)
-        block.(...)
-      rescue StandardError => e
-        raise e if raise_errors
-      end
-
-      private
-
-      attr_reader :raise_errors, :block
-    end
-
     module ClassMethods
+      # Callback registry that stores a mapping of callbacks for all concrete
+      # service classes. The registry is a hash that lives in the base class,
+      # where the keys are `class_name.event_name`, and the values are
+      # instances of `Listener`.
+      #
       def self.extended(klass)
         klass.class_eval do
-          # TODO: Remove dependency on ActiveSupport.
-          #
-          class_attribute :event_listeners,
-                          instance_accessor: false,
-                          default: Hash.new { |h, k| h[k] = [] }
+          @event_listeners = Hash.new { |h, k| h[k] = [] }
+
+          class << self
+            attr_reader :event_listeners
+          end
         end
       end
 
