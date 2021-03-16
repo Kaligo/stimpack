@@ -2,6 +2,10 @@
 
 ## 0.5.4
 
+### New features
+
+- Add nicely formatted inspect output for `ResultMonad::Result`.
+
 ### Maintenance
 
 - Split child classes of `EventSource` and `OptionsDeclaration` into own files.

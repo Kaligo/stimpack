@@ -75,13 +75,13 @@ RSpec.describe Stimpack::ResultMonad do
     context "when a result key is declared" do
       before { service.result(:foo) }
 
-      it { expect(service.result_struct.members).to contain_exactly(:foo, :errors) }
+      it { expect(service.result_struct.members).to contain_exactly(:foo, :errors, :klass) }
     end
 
     context "when a blank result is declared" do
       before { service.blank_result }
 
-      it { expect(service.result_struct.members).to contain_exactly(:errors) }
+      it { expect(service.result_struct.members).to contain_exactly(:errors, :klass) }
     end
   end
 
