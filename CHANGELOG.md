@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.5
+
+### New features
+
+- Add `error_handler` configuration option to the `EventSource` module.
+
 ## 0.5.4
 
 ### New features

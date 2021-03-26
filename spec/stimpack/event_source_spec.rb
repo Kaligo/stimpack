@@ -15,6 +15,26 @@ RSpec.describe Stimpack::EventSource do
     end
   end
 
+  describe ".error_handler" do
+    context "when no error handler has been configured" do
+      it { expect(described_class.error_handler).to respond_to(:call) }
+    end
+
+    context "when an error handler has been configured" do
+      let(:error_handler) { instance_double(Proc) }
+
+      before do
+        described_class.error_handler = error_handler
+      end
+
+      after do
+        described_class.error_handler = nil
+      end
+
+      it { expect(described_class.error_handler).to eq(error_handler) }
+    end
+  end
+
   describe ".on" do
     it { expect { service.on(:foo) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1) }
   end

@@ -16,6 +16,8 @@ module Stimpack
       def call(...)
         block.(...)
       rescue StandardError => e
+        EventSource.error_handler.(e)
+
         raise e if raise_errors
       end
 
