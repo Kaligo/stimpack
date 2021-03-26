@@ -20,6 +20,16 @@ module Stimpack
   #   Checkout.on(:error) { |event| Appsignal.report(event.message) }
   #
   module EventSource
+    DEFAULT_ERROR_HANDLER = ->(_error) {}
+
+    def self.error_handler
+      @error_handler || DEFAULT_ERROR_HANDLER
+    end
+
+    def self.error_handler=(handler)
+      @error_handler = handler
+    end
+
     module ClassMethods
       # Callback registry that stores a mapping of callbacks for all concrete
       # service classes. The registry is a hash that lives in the base class,

@@ -8,6 +8,7 @@ and behaviour.
 ## Table of Contents
 
 - [EventSource](#eventsource)
+  - [Error handling](#error-handling)
 - [FunctionalObject](#functionalobject)
 - [OptionsDeclaration](#optionsdeclaration)
 - [ResultMonad](#resultmonad)
@@ -66,6 +67,21 @@ rescue StandardError => error
   log_error(error.message)
 end
 ```
+
+Alternatively, you can configure an event handler for all `EventSource` classes
+to use. The error handler needs to respond fo `#call` and will be passed a
+single argument, the error that was raised:
+
+**Example:**
+
+```ruby
+EventSource.error_handler = ->(error) { AppSignal.error(error) }
+```
+
+This can be useful for instrumentation, and to handle errors differently
+depending on which environment the code is running in.
+
+*Note: Once configured, this will apply to all listeners.*
 
 ## FunctionalObject
 
