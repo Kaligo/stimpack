@@ -51,11 +51,11 @@ module Stimpack
       #
       def self.extended(klass)
         klass.class_eval do
-          @callbacks = Hash.new { |h, k| h[k] = [] }
-
-          class << self
-            attr_reader :callbacks
-          end
+          # TODO: Remove dependency on ActiveSupport.
+          #
+          class_attribute :callbacks,
+                          instance_accessor: false,
+                          default: Hash.new { |h, k| h[k] = [] }
         end
       end
 

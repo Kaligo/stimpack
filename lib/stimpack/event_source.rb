@@ -38,11 +38,11 @@ module Stimpack
       #
       def self.extended(klass)
         klass.class_eval do
-          @event_listeners = Hash.new { |h, k| h[k] = [] }
-
-          class << self
-            attr_reader :event_listeners
-          end
+          # TODO: Remove dependency on ActiveSupport.
+          #
+          class_attribute :event_listeners,
+                          instance_accessor: false,
+                          default: Hash.new { |h, k| h[k] = [] }
         end
       end
 

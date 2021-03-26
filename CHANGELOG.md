@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.6
+
+### Bug fixes
+
+- Add back dependency on `ActiveSupport#class_attribute` which was dropped
+  prematurely.
+
 ## 0.5.5
 
 ### New features
