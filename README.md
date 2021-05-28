@@ -152,11 +152,62 @@ Foo.new(bar: "Hello!")
 
 When declaring an option, the following configuration kets are available:
 
-| Configuration    | Type         | Default | Notes |
-| ---------------  | ------------ | ------- | ----- |
-| `default`        | `any`        | `nil`   | Can be a literal or a callable object. Arrays and hashes will not be shared across instances. |
-| `required`       | `boolean`    | `true`  | |
-| `private_reader` | `boolean`    | `true`  | |
+| Configuration    | Type            | Default | Notes |
+| ---------------  | --------------- | ------- | ----- |
+| `default`        | `any`           | `nil`   | Can be a literal or a callable object. Arrays and hashes will not be shared across instances. |
+| `required`       | `boolean`       | `true`  | |
+| `transform`      | `symbol`/`proc` | `noop`  | Can be a symbol that is a method on the value, or a callable object that takes the value as argument. |
+| `private_reader` | `boolean`       | `true`  | |
+
+### Transformations
+
+You can declare transformations which will be performed on the value when
+assigned. This also works with default values. (The transformation will be
+applied to the default value.)
+
+**Example:**
+
+Given the following declaration:
+
+```ruby
+class Foo
+  include Stimpack::OptionsDeclaration
+
+  option :bar, transform: ->(value) { value.upcase }
+end
+```
+
+values assigned to `bar` will now be upcased:
+
+```ruby
+foo = Foo.new(bar: "baz")
+
+foo.bar
+#=> "BAZ"
+```
+
+You can also use the name of method on the value, passed as a symbol.
+
+**Example:**
+
+Given the following declaration:
+
+```ruby
+class Foo
+  include Stimpack::OptionsDeclaration
+
+  option :bar, transform: :symbolize_keys
+end
+```
+
+hashes assigned to `bar` will now have their keys symbolized:
+
+```ruby
+foo = Foo.new(bar: { "baz" => "qux" })
+
+foo.bar
+#=> { baz: "qux" }
+```
 
 ## ResultMonad
 
