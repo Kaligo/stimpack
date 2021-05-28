@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0
+
+### New features
+
+- Add support for transformation methods to `OptionsDeclaration`.
+
 ## 0.5.6
 
 ### Bug fixes

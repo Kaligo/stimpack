@@ -40,9 +40,11 @@ module Stimpack
         def assign_option(option)
           assigned_value = options[option.name]
 
+          value = assigned_value.nil? ? option.default_value : assigned_value
+
           service.instance_variable_set(
             "@#{option.name}",
-            assigned_value.nil? ? option.default_value : assigned_value
+            option.transformed_value(value)
           )
         end
 

@@ -9,11 +9,13 @@ module Stimpack
       # omitted and one that was explicitly set to `nil`.
       #
       MISSING_VALUE = "__missing__"
+      NO_TRANSFORM = "__noop__"
 
-      def initialize(name, required:, default:)
+      def initialize(name, required:, default:, transform:)
         @name = name
         @default = default
         @required = required
+        @transform = transform
       end
 
       attr_reader :name
@@ -22,6 +24,10 @@ module Stimpack
         return nil unless default?
 
         default.respond_to?(:call) ? default.() : default
+      end
+
+      def transformed_value(value)
+        transform? ? transform.to_proc.(value) : value
       end
 
       def required?
@@ -36,9 +42,13 @@ module Stimpack
         default != MISSING_VALUE
       end
 
+      def transform?
+        transform != NO_TRANSFORM
+      end
+
       private
 
-      attr_reader :default, :required
+      attr_reader :default, :required, :transform
     end
   end
 end

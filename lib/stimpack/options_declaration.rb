@@ -56,7 +56,14 @@ module Stimpack
       #     option :user
       #   end
       #
-      def option(*identifiers, required: true, default: Option::MISSING_VALUE, private_reader: true) # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics/MethodLength
+      def option(
+        *identifiers,
+        required: true,
+        default: Option::MISSING_VALUE,
+        transform: Option::NO_TRANSFORM,
+        private_reader: true
+      )
         self.options_configuration = options_configuration.merge(
           identifiers.map do |identifier|
             [
@@ -64,7 +71,8 @@ module Stimpack
               Option.new(
                 identifier.to_sym,
                 required: required,
-                default: default
+                default: default,
+                transform: transform
               )
             ]
           end.to_h
@@ -78,6 +86,7 @@ module Stimpack
           end
         end
       end
+      # rubocop:enable Metrics/MethodLength
 
       def options
         options_configuration.keys
