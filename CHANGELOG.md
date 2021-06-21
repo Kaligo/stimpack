@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+### New features
+
+- Allow transform declaration with optional value to `OptionsDeclaration`.
+
 ## 0.6.0
 
 ### New features
