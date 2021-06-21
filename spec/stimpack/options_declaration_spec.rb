@@ -18,11 +18,12 @@ RSpec.describe Stimpack::OptionsDeclaration do
       option :corge, transform: ->(value) { value.upcase }
       option :grault, default: "bar", transform: ->(value) { value.upcase }
       option :garply, default: "baz", transform: :upcase
+      option :waldo, required: false, transform: :to_sym
     end
   end
 
   describe ".option" do
-    it { expect(service.options_configuration.size).to eq(9) }
+    it { expect(service.options_configuration.size).to eq(10) }
     it { expect(service.options_configuration.values).to all(be_a(described_class::Option)) }
 
     describe "private_reader (option)" do
@@ -30,12 +31,12 @@ RSpec.describe Stimpack::OptionsDeclaration do
       let(:private_instance_methods) { service.private_instance_methods(false) }
 
       it { expect(public_instance_methods).to contain_exactly(:baz) }
-      it { expect(private_instance_methods).to contain_exactly(:foo, :bar, :qux, :quux, :quuz, :corge, :grault, :garply) } # rubocop:disable Layout/LineLength
+      it { expect(private_instance_methods).to contain_exactly(:foo, :bar, :qux, :quux, :quuz, :corge, :grault, :garply, :waldo) } # rubocop:disable Layout/LineLength
     end
   end
 
   describe ".options" do
-    it { expect(service.options).to contain_exactly(:foo, :bar, :baz, :qux, :quux, :quuz, :corge, :grault, :garply) }
+    it { expect(service.options).to contain_exactly(:foo, :bar, :baz, :qux, :quux, :quuz, :corge, :grault, :garply, :waldo) } # rubocop:disable Layout/LineLength
   end
 
   describe ".required_options" do
@@ -43,7 +44,7 @@ RSpec.describe Stimpack::OptionsDeclaration do
   end
 
   describe ".optional_options" do
-    it { expect(service.optional_options).to contain_exactly(:bar, :qux, :quux, :quuz, :grault, :garply) }
+    it { expect(service.optional_options).to contain_exactly(:bar, :qux, :quux, :quuz, :grault, :garply, :waldo) }
   end
 
   describe ".default_options" do
@@ -109,6 +110,18 @@ RSpec.describe Stimpack::OptionsDeclaration do
 
       context "when using a method name for transform" do
         it { expect(instance.send(:garply)).to eq("BAZ") }
+      end
+
+      context "when transform is applied to optional" do
+        context "with no value provided" do
+          it { expect(instance.send(:waldo)).to eq(nil) }
+        end
+
+        context "with value provided" do
+          before { options.merge!(waldo: "fubaz") }
+
+          it { expect(instance.send(:waldo)).to eq(:fubaz) }
+        end
       end
     end
   end

@@ -27,7 +27,7 @@ module Stimpack
       end
 
       def transformed_value(value)
-        transform? ? transform.to_proc.(value) : value
+        transform? && value ? transform.to_proc.(value) : value
       end
 
       def required?
