@@ -5,6 +5,10 @@ RSpec.configure do |config|
     # This option will default to `true` in RSpec 4.
     #
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
+
+    # We intentionally expect no error raised with a specific error class.
+    #
+    expectations.on_potential_false_positives = :nothing
   end
 
   config.mock_with :rspec do |mocks|
