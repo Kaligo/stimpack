@@ -12,6 +12,8 @@ and behaviour.
 - [FunctionalObject](#functionalobject)
 - [OptionsDeclaration](#optionsdeclaration)
 - [ResultMonad](#resultmonad)
+  - [Callbacks](#callbacks)
+  - [Guard clauses](#guard-clauses)
 
 ## EventSource
 
@@ -293,3 +295,52 @@ end
 
 *Note: The block is evaluated in the context of the instance, so you can call
 any instance methods from inside the block.*
+
+### Guard clauses
+
+The `ResultMonad::GuardClause` mixin (included by default) allows for stepwise
+calling of inner, or nested, `ResultMonad` instances with automatic error
+propagation. This currently works for the `#call` method only.
+
+**Example:**
+
+```ruby
+class Foo
+  include Stimpack::ResultMonad
+
+  before_error do
+    log_tracking_data
+  end
+
+  def call
+    guard :bar_guard
+    guard { baz_guard }
+  end
+
+  private
+
+  def log_tracking_data
+    # ...
+  end
+
+  def bar_guard
+    Bar.() # Another ResultMonad.
+  end
+
+  def baz_guard
+    if qux?
+      error(errors: ["Qux failed."])
+    else
+      success
+    end
+  end
+end
+```
+
+In the example above, if either of the methods declared as guards return a
+failed `Result`, the `#call` method will halt execution, invoke the error
+callback, and return the result from the inner monad. On the other hand, as
+long as the guards return a success `Result`, the execution continues as
+expected.
+
+*Note: Any error callbacks declared on the inner monad will also be invoked.*

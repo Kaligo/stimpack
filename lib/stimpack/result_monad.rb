@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "./result_monad/result"
+require_relative "./result_monad/guard_clause"
 
 module Stimpack
   # This mixin augments its consumer class with methods to return structured
@@ -120,6 +121,7 @@ module Stimpack
 
     def self.included(klass)
       klass.extend(ClassMethods)
+      klass.include(GuardClause)
     end
 
     private

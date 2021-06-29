@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+### New features
+
+- Add guard clauses through new `ResultMonad::GuardClause` mixin.
+
 ## 0.6.1
 
 ### New features

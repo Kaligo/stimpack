@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stimpack (0.6.0)
+    stimpack (0.7.0)
       activesupport (~> 6.1)
 
 GEM
