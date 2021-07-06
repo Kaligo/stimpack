@@ -36,4 +36,14 @@ RSpec.describe Stimpack::ResultMonad::Result do
       it { expect(instance.error_result(errors: "Oops!").inspect).to eq("<Foo:failed errors : \"Oops!\">") }
     end
   end
+
+  describe "#unwrap!" do
+    context "when result is successful" do
+      it { expect(instance.success_result(foo: "bar").unwrap!).to eq("bar") }
+    end
+
+    context "when result is failed" do
+      it { expect { instance.error_result(errors: "Oops!").unwrap! }.to raise_error(described_class::UnwrapError) }
+    end
+  end
 end
