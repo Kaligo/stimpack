@@ -27,9 +27,9 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
 
       def call
         guard :foo
-        guard { bar }
+        intermediate = guard { bar }
 
-        success(foo: "bar")
+        success(foo: intermediate)
       end
 
       private
@@ -56,6 +56,7 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
     double(
       Stimpack::ResultMonad::Result,
       failed?: false,
+      unwrap!: "Foo",
       errors: []
     )
   end
@@ -86,6 +87,7 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
       end
 
       it { expect(instance.()).to be_successful }
+      it { expect(instance.().foo).to eq("Foo") }
     end
 
     context "when a guard fails" do

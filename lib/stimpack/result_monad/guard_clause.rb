@@ -58,7 +58,7 @@ module Stimpack
 
         raise GuardFailed, result if result.failed?
 
-        result
+        result.unwrap!
       end
 
       def self.included(klass)
