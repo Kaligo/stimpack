@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0
+
+### New features
+
+- Yield the result of the call from `FunctionalObject` if block is given.
+
 ## 0.7.1
 
 ### New features

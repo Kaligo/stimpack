@@ -11,8 +11,12 @@ module Stimpack
   #
   module FunctionalObject
     module ClassMethods
-      def call(...)
-        new(...).()
+      def call(*arguments, **options)
+        result = new(*arguments, **options).()
+
+        yield result if block_given?
+
+        result
       end
     end
 
