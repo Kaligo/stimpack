@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1
+
+### New features
+
+- Add `ResultMonad::GuardClause#pass` method which can be used to pass guards.
+
 ## 0.7.0
 
 ### New features

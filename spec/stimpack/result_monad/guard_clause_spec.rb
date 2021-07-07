@@ -27,9 +27,10 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
 
       def call
         guard :foo
-        intermediate = guard { bar }
+        bar_result = guard { bar }
+        baz_result = guard { baz }
 
-        success(foo: intermediate)
+        success(foo: bar_result + baz_result)
       end
 
       private
@@ -40,6 +41,10 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
 
       def bar
         # Stubbed in test cases.
+      end
+
+      def baz
+        pass("Baz")
       end
     end
   end
@@ -57,7 +62,7 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
       Stimpack::ResultMonad::Result,
       failed?: false,
       unwrap!: "Foo",
-      errors: []
+      errors: nil
     )
   end
 
@@ -87,7 +92,7 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
       end
 
       it { expect(instance.()).to be_successful }
-      it { expect(instance.().foo).to eq("Foo") }
+      it { expect(instance.().foo).to eq("FooBaz") }
     end
 
     context "when a guard fails" do

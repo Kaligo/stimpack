@@ -314,7 +314,7 @@ class Foo
 
   def call
     guard :bar_guard
-    guard { baz_guard }
+    qux = guard { baz_guard }
   end
 
   private
@@ -329,9 +329,9 @@ class Foo
 
   def baz_guard
     if qux?
-      error(errors: ["Qux failed."])
+      pass("Qux")
     else
-      success
+      error(errors: ["Qux failed."])
     end
   end
 end
