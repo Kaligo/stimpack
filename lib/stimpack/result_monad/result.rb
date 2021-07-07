@@ -3,12 +3,21 @@
 module Stimpack
   module ResultMonad
     class Result < Struct
+      class UnwrapError < StandardError; end
+
       def successful?
         errors.nil?
       end
 
       def failed?
         !successful?
+      end
+
+      def unwrap!
+        raise UnwrapError, "Can not unwrap a failed result." if failed?
+        return if klass.blank_result?
+
+        public_send(result_key)
       end
 
       def inspect

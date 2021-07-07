@@ -2,6 +2,8 @@
 
 module Stimpack
   module ResultMonad
+    PassResult = Result.new(:klass, :errors, :_value, keyword_init: true)
+
     # This module adds a `#guard` method, which can be used inside a `#call`
     # to declare a step which, if it fails, breaks the flow of the method and
     # propagates the error result.
@@ -58,7 +60,13 @@ module Stimpack
 
         raise GuardFailed, result if result.failed?
 
-        result
+        result.unwrap!
+      end
+
+      # A standardized result object which can be used to pass guards.
+      #
+      def pass(value = nil)
+        PassResult.new(klass: self.class, errors: nil, _value: value)
       end
 
       def self.included(klass)
