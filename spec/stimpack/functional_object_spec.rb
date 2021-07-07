@@ -21,22 +21,25 @@ RSpec.describe Stimpack::FunctionalObject do
         Class.new do
           include Stimpack::FunctionalObject
 
-          def initialize(foo, bar:, &block)
+          def initialize(foo, bar:)
             @foo = foo
             @bar = bar
-            @baz = block.()
           end
 
-          attr_reader :foo, :bar, :baz
+          attr_reader :foo, :bar
 
           def call
-            [foo, bar, baz]
+            [foo, bar]
           end
         end
       end
 
       it "delegates arguments, options, and block" do
-        expect(klass.("foo", bar: "bar") { "baz" }).to eq(%w[foo bar baz])
+        expect(klass.("foo", bar: "bar") { "baz" }).to eq(%w[foo bar])
+      end
+
+      it "yields the return value to the block if given" do
+        expect { |block| klass.("foo", bar: "bar", &block) }.to yield_with_args(%w[foo bar])
       end
     end
   end

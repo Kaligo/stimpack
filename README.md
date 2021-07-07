@@ -119,6 +119,21 @@ Foo.(bar: "Hello world!")
 #=> "Hello world!"
 ```
 
+You can optionally pass a block to the call which will receive the result of
+the method and will execute before returning.
+
+**Note: The result is still always returned.**
+
+```ruby
+Foo.(bar: "Hello world!") do |result|
+  if result.successful?
+    # Do stuff.
+  else
+    # Report errors.
+  end
+end
+```
+
 ## OptionsDeclaration
 
 A mixin that introduces the concept of an `option`, and lets classes declare
