@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
 
   # TODO: Drop ActiveSupport dependency.
   #
-  spec.add_dependency "activesupport", "~> 6.1"
+  spec.add_dependency "activesupport", ">= 6.1"
 
   spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "rubocop", "~> 1.11"
