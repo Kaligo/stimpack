@@ -31,6 +31,8 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
         baz_result = guard { baz }
 
         success(foo: bar_result + baz_result)
+      rescue StandardError
+        error(errors: "Something went wrong, but not a guard fail.")
       end
 
       private

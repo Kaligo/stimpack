@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.8.2
+
+### Bug fixes
+
+- Have `GuardFailed` inherit from `Exception` instead of `StandardError`.
+
+## 0.8.1
+
+## Maintenance
+- Loosen the ActiveSupport dependency version to prepare for Rails 7.
+
 ## 0.8.0
 
 ### New features
