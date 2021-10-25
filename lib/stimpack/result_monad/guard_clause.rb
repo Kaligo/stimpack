@@ -39,7 +39,7 @@ module Stimpack
       # guard fails. It carries the error result with it, and passes it to the
       # caller which can then work with it.
       #
-      class GuardFailed < StandardError
+      class GuardFailed < Exception # rubocop:disable Lint/InheritException
         # rubocop:disable Lint/MissingSuper
         def initialize(result)
           @result = result

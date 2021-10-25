@@ -359,3 +359,7 @@ long as the guards return a success `Result`, the execution continues as
 expected.
 
 *Note: Any error callbacks declared on the inner monad will also be invoked.*
+
+Guard clauses use `raise` and `rescue` internally, but the exception used is
+directly inherited from `Exception`, so it is safe to rescue anything downstream
+of that, e.g. `StandardError` in your methods which have guard clauses.
