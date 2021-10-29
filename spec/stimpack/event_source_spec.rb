@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "stimpack/event_source"
+require "active_support/core_ext/class/attribute"
 
 RSpec.describe Stimpack::EventSource do
   subject(:service) { klass }
@@ -36,7 +37,13 @@ RSpec.describe Stimpack::EventSource do
   end
 
   describe ".on" do
-    it { expect { service.on(:foo) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1) }
+    context "with single event" do 
+      it { expect { service.on(:foo) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1) }
+    end
+
+    context "with multiple events" do
+      it { expect { service.on(:foo, :bar, :qux) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1).and change { klass.event_listeners["Foo.bar"].size }.by(1).and change { klass.event_listeners["Foo.qux"].size }.by(1) }
+    end
   end
 
   describe "#emit" do

@@ -39,11 +39,15 @@ we can register a callback to listen for events from another part of our
 application, and we will receive an event object when the event is emitted:
 
 ```ruby
-Foo.on(:bar) do |event|
+Foo.on(:bar, :qui, :qux) do |event|
   puts event.message
 end
 
 Foo.new.bar
+#=> "Hello, world!"
+Foo.new.qui
+#=> "Hello, world!"
+Foo.new.qux
 #=> "Hello, world!"
 ```
 

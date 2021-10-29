@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.3
+
+### New features
+
+- Listen on multiple event names to `EventSource` listener.
+
 ## 0.8.2
 
 ### Bug fixes

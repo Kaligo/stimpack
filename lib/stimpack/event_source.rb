@@ -46,10 +46,12 @@ module Stimpack
         end
       end
 
-      def on(event_name, raise_errors: false, &block)
+      def on(*event_names, raise_errors: false, &block)
         listener = Listener.new(raise_errors: raise_errors, &block)
 
-        event_listeners["#{self}.#{event_name}"] << listener
+        event_names.each do |event_name|
+          event_listeners["#{self}.#{event_name}"] << listener
+        end
       end
     end
 
