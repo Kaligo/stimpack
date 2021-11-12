@@ -5,10 +5,14 @@ require "stimpack/result_monad"
 RSpec.describe Stimpack::ResultMonad do
   subject(:service) { klass }
 
-  let(:klass) do
+  let(:super_klass) do
     Class.new do
       include Stimpack::ResultMonad
+    end
+  end
 
+  let(:klass) do
+    Class.new(super_klass) do
       def success_result(**options)
         success(**options)
       end
@@ -16,6 +20,8 @@ RSpec.describe Stimpack::ResultMonad do
       def error_result(errors:)
         error(errors: errors)
       end
+
+      def accumulator; end
 
       def self.to_s
         "Foo"
@@ -87,32 +93,50 @@ RSpec.describe Stimpack::ResultMonad do
 
   describe ".before_success" do
     let(:instance) { service.new }
+    let(:accumulator) { spy }
 
     before do
-      allow(instance).to receive(:inspect)
+      allow(instance).to receive(:accumulator).and_return(accumulator)
+
+      allow(accumulator).to receive(:callback)
+      allow(accumulator).to receive(:parent_callback)
 
       service.blank_result
-      service.before_success { inspect }
+      service.before_success { accumulator.callback }
+
+      super_klass.before_success { accumulator.parent_callback }
 
       instance.success_result
     end
 
-    it { expect(instance).to have_received(:inspect).once }
+    it "runs the callbacks up the class hierarchy" do
+      expect(accumulator).to have_received(:callback).ordered
+      expect(accumulator).to have_received(:parent_callback).ordered
+    end
   end
 
   describe ".before_error" do
     let(:instance) { service.new }
+    let(:accumulator) { spy }
 
     before do
-      allow(instance).to receive(:inspect)
+      allow(instance).to receive(:accumulator).and_return(accumulator)
+
+      allow(accumulator).to receive(:callback)
+      allow(accumulator).to receive(:parent_callback)
 
       service.blank_result
-      service.before_error { inspect }
+      service.before_error { accumulator.callback }
+
+      super_klass.before_error { accumulator.parent_callback }
 
       instance.error_result(errors: ["foo"])
     end
 
-    it { expect(instance).to have_received(:inspect).once }
+    it "runs the callbacks up the class hierarchy" do
+      expect(accumulator).to have_received(:callback).ordered
+      expect(accumulator).to have_received(:parent_callback).ordered
+    end
   end
 
   describe "#success" do

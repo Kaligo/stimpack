@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.0
+
+### New features
+
+- `ResultMonad` callbacks (`before_success`, `before_error`) are now inherited.
+
 ## 0.8.3
 
 ### New features
