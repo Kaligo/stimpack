@@ -174,9 +174,11 @@ module Stimpack
     end
 
     def run_callback(name)
-      callback = self.class.callbacks["#{self.class}.#{name}"]
+      self.class.ancestors.each do |ancestor|
+        callback = self.class.callbacks["#{ancestor}.#{name}"]
 
-      instance_exec(&callback) if callback.respond_to?(:call)
+        instance_exec(&callback) if callback.respond_to?(:call)
+      end
     end
   end
 end

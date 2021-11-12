@@ -291,8 +291,8 @@ The `ResultMonad` mixin exposes two callbacks, `before_success` and
 `before_error`. These can be configured by passing a block to them in the
 class body.
 
-*Note: Callbacks are not inherited, and declaring multiple callbacks in the
-same class will overwrite the previous one.*
+*Note: Declaring an already declared callback in the same class will overwrite
+the previous one.*
 
 **Example:**
 
@@ -314,6 +314,37 @@ end
 
 *Note: The block is evaluated in the context of the instance, so you can call
 any instance methods from inside the block.*
+
+Callbacks are inherited, and all inherited callbacks will be invoked as they
+are traversed up the inheritance chain. In this case, all callbacks are
+evaluated in the context of the class where the `success` or `error` method
+was called.
+
+**Example:**
+
+```ruby
+class Foo
+  include Stimpack::ResultMonad
+
+  before_success do
+    puts "Parent"
+  end
+end
+
+class Bar < Foo
+  before_success do
+    puts "Child"
+  end
+
+  def call
+    success
+  end
+end
+
+Bar.()
+#=> "Child"
+#=> "Parent"
+```
 
 ### Guard clauses
 
