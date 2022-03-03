@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1
+
+### Bug fixes
+
+- Prevent mutable default options from being shared across instances.
+
 ## 0.9.0
 
 ### New features
@@ -21,6 +27,7 @@
 ## 0.8.1
 
 ## Maintenance
+
 - Loosen the ActiveSupport dependency version to prepare for Rails 7.
 
 ## 0.8.0

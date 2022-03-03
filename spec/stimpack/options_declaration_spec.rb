@@ -19,24 +19,29 @@ RSpec.describe Stimpack::OptionsDeclaration do
       option :grault, default: "bar", transform: ->(value) { value.upcase }
       option :garply, default: "baz", transform: :upcase
       option :waldo, required: false, transform: :to_sym
+      option :plugh, default: []
+
+      def call
+        plugh << "Hello"
+      end
     end
   end
 
   describe ".option" do
-    it { expect(service.options_configuration.size).to eq(10) }
+    it { expect(service.options_configuration.size).to eq(11) }
     it { expect(service.options_configuration.values).to all(be_a(described_class::Option)) }
 
     describe "private_reader (option)" do
       let(:public_instance_methods) { service.public_instance_methods(false) }
       let(:private_instance_methods) { service.private_instance_methods(false) }
 
-      it { expect(public_instance_methods).to contain_exactly(:baz) }
-      it { expect(private_instance_methods).to contain_exactly(:foo, :bar, :qux, :quux, :quuz, :corge, :grault, :garply, :waldo) } # rubocop:disable Layout/LineLength
+      it { expect(public_instance_methods).to include(:baz) }
+      it { expect(private_instance_methods).to include(:foo, :bar, :qux, :quux, :quuz, :corge, :grault, :garply, :waldo, :plugh) } # rubocop:disable Layout/LineLength
     end
   end
 
   describe ".options" do
-    it { expect(service.options).to contain_exactly(:foo, :bar, :baz, :qux, :quux, :quuz, :corge, :grault, :garply, :waldo) } # rubocop:disable Layout/LineLength
+    it { expect(service.options).to contain_exactly(:foo, :bar, :baz, :qux, :quux, :quuz, :corge, :grault, :garply, :waldo, :plugh) } # rubocop:disable Layout/LineLength
   end
 
   describe ".required_options" do
@@ -44,11 +49,11 @@ RSpec.describe Stimpack::OptionsDeclaration do
   end
 
   describe ".optional_options" do
-    it { expect(service.optional_options).to contain_exactly(:bar, :qux, :quux, :quuz, :grault, :garply, :waldo) }
+    it { expect(service.optional_options).to contain_exactly(:bar, :qux, :quux, :quuz, :grault, :garply, :waldo, :plugh) } # rubocop:disable Layout/LineLength
   end
 
   describe ".default_options" do
-    it { expect(service.default_options).to contain_exactly(:qux, :quux, :quuz, :grault, :garply) }
+    it { expect(service.default_options).to contain_exactly(:qux, :quux, :quuz, :grault, :garply, :plugh) }
   end
 
   describe "#initialize" do
@@ -98,6 +103,12 @@ RSpec.describe Stimpack::OptionsDeclaration do
         it { expect(instance.send(:qux)).to eq("Foo") }
         it { expect(instance.send(:quux)).to eq("Bar") }
         it { expect(instance.send(:quuz)).to eq(nil) }
+      end
+
+      context "when default option is a mutable object" do
+        before { klass.new(foo: "1", baz: "2", corge: "3").() }
+
+        it { expect(instance.send(:plugh)).to eq([]) }
       end
 
       context "when transform is applied to user input" do
