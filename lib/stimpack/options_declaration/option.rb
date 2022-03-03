@@ -23,7 +23,7 @@ module Stimpack
       def default_value
         return nil unless default?
 
-        default.respond_to?(:call) ? default.() : default
+        default.respond_to?(:call) ? default.() : default.dup
       end
 
       def transformed_value(value)

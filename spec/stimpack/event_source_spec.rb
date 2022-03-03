@@ -37,12 +37,12 @@ RSpec.describe Stimpack::EventSource do
   end
 
   describe ".on" do
-    context "with single event" do 
+    context "with single event" do
       it { expect { service.on(:foo) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1) }
     end
 
     context "with multiple events" do
-      it { expect { service.on(:foo, :bar, :qux) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1).and change { klass.event_listeners["Foo.bar"].size }.by(1).and change { klass.event_listeners["Foo.qux"].size }.by(1) }
+      it { expect { service.on(:foo, :bar, :qux) {} }.to change { klass.event_listeners["Foo.foo"].size }.by(1).and change { klass.event_listeners["Foo.bar"].size }.by(1).and change { klass.event_listeners["Foo.qux"].size }.by(1) } # rubocop:disable Layout/LineLength
     end
   end
 
