@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0
+
+### New features
+
+- `ResultMonad` is added (`after_success`, `after_error`) callbacks.
+
 ## 0.9.1
 
 ### Bug fixes

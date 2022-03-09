@@ -139,6 +139,54 @@ RSpec.describe Stimpack::ResultMonad do
     end
   end
 
+  describe ".after_success" do
+    let(:instance) { service.new }
+    let(:accumulator) { spy }
+
+    before do
+      allow(instance).to receive(:accumulator).and_return(accumulator)
+
+      allow(accumulator).to receive(:callback)
+      allow(accumulator).to receive(:parent_callback)
+
+      service.blank_result
+      service.after_success { accumulator.callback }
+
+      super_klass.after_success { accumulator.parent_callback }
+
+      instance.success_result
+    end
+
+    it "runs the callbacks up the class hierarchy" do
+      expect(accumulator).to have_received(:callback).ordered
+      expect(accumulator).to have_received(:parent_callback).ordered
+    end
+  end
+
+  describe ".after_error" do
+    let(:instance) { service.new }
+    let(:accumulator) { spy }
+
+    before do
+      allow(instance).to receive(:accumulator).and_return(accumulator)
+
+      allow(accumulator).to receive(:callback)
+      allow(accumulator).to receive(:parent_callback)
+
+      service.blank_result
+      service.after_error { accumulator.callback }
+
+      super_klass.after_error { accumulator.parent_callback }
+
+      instance.error_result(errors: ["foo"])
+    end
+
+    it "runs the callbacks up the class hierarchy" do
+      expect(accumulator).to have_received(:callback).ordered
+      expect(accumulator).to have_received(:parent_callback).ordered
+    end
+  end
+
   describe "#success" do
     before { service.result(:foo) }
 

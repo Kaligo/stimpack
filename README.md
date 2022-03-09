@@ -287,9 +287,9 @@ end
 
 ### Callbacks
 
-The `ResultMonad` mixin exposes two callbacks, `before_success` and
-`before_error`. These can be configured by passing a block to them in the
-class body.
+The `ResultMonad` mixin exposes four callbacks, `before_success`, `after_success`,
+`before_error` and `after_error`. These can be configured by passing a block to 
+them in the class body.
 
 *Note: Declaring an already declared callback in the same class will overwrite
 the previous one.*

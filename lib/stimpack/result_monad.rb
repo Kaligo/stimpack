@@ -40,6 +40,14 @@ module Stimpack
   #     before_error do
   #       # ...
   #     end
+  #
+  #     after_success do
+  #       # ...
+  #     end
+  #
+  #     after_error do
+  #       # ...
+  #     end
   #   end
   #
   module ResultMonad
@@ -61,11 +69,19 @@ module Stimpack
       end
 
       def before_success(&block)
-        setup_callback(:success, &block)
+        setup_callback(:before_success, &block)
       end
 
       def before_error(&block)
-        setup_callback(:error, &block)
+        setup_callback(:before_error, &block)
+      end
+
+      def after_success(&block)
+        setup_callback(:after_success, &block)
+      end
+
+      def after_error(&block)
+        setup_callback(:after_error, &block)
       end
 
       # Used to declare the structure of the result object in the case of a
@@ -137,17 +153,25 @@ module Stimpack
     def success(**result_attributes)
       raise incompatible_result_error(result_attributes.keys) unless compatible_result?(**result_attributes)
 
-      run_callback(:success)
+      run_callback(:before_success)
 
-      self.class.result_struct.new(klass: self.class, **result_attributes)
+      result = self.class.result_struct.new(klass: self.class, **result_attributes)
+
+      run_callback(:after_success)
+
+      result
     end
 
     # To be called from within an object when its invocation fails.
     #
     def error(errors:)
-      run_callback(:error)
+      run_callback(:before_error)
 
-      self.class.result_struct.new(klass: self.class, errors: errors)
+      result = self.class.result_struct.new(klass: self.class, errors: errors)
+
+      run_callback(:after_error)
+
+      result
     end
     alias_method :error_with, :error
 
