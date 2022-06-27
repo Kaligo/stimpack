@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.2
+
+### Bug fixes
+
+- Prevent duplicate invocation of the error callback when guarding an instance
+  method.
+
 ## 0.9.1
 
 ### Bug fixes

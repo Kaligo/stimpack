@@ -29,7 +29,11 @@ module Stimpack
         def call
           super
         rescue GuardFailed => e
-          run_callback(:error)
+          # Avoid running the error callback in the case where it was already
+          # called by using `#error` in an instance method that is guarded
+          # against in the `#call` method.
+          #
+          run_callback(:error) unless e.result.klass == self.class
 
           e.result
         end

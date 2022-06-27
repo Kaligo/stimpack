@@ -5,13 +5,20 @@ require "stimpack/result_monad"
 RSpec.describe Stimpack::ResultMonad::GuardClause do
   subject(:service) { klass }
 
-  let(:instance) { service.new }
+  let(:instance) { service.new(private_error: private_error) }
+  let(:private_error) { false }
 
   let(:klass) do
     Class.new do
       include Stimpack::ResultMonad
 
       result :foo
+
+      def initialize(private_error: false)
+        @private_error = private_error
+      end
+
+      attr_reader :private_error
 
       def success_result(**options)
         success(**options)
@@ -27,8 +34,11 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
 
       def call
         guard :foo
+
         bar_result = guard { bar }
         baz_result = guard { baz }
+
+        guard { qux } if private_error
 
         success(foo: bar_result + baz_result)
       rescue StandardError
@@ -48,6 +58,10 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
       def baz
         pass("Baz")
       end
+
+      def qux
+        error(errors: ["Same class error"])
+      end
     end
   end
 
@@ -55,6 +69,7 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
     double(
       Stimpack::ResultMonad::Result,
       failed?: true,
+      klass: "Foo",
       errors: ["Inner error"]
     )
   end
@@ -63,6 +78,7 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
     double(
       Stimpack::ResultMonad::Result,
       failed?: false,
+      klass: "Foo",
       unwrap!: "Foo",
       errors: nil
     )
@@ -121,15 +137,33 @@ RSpec.describe Stimpack::ResultMonad::GuardClause do
   end
 
   describe ".before_error" do
-    before do
-      allow(instance).to receive(:inspect)
-      allow(instance).to receive(:foo).and_return(inner_service_error)
+    context "when inner service fails" do
+      before do
+        allow(instance).to receive(:inspect)
+        allow(instance).to receive(:foo).and_return(inner_service_error)
 
-      service.before_error { inspect }
+        service.before_error { inspect }
 
-      instance.()
+        instance.()
+      end
+
+      it { expect(instance).to have_received(:inspect).once }
     end
 
-    it { expect(instance).to have_received(:inspect).once }
+    context "when passing an error from an instance method" do
+      let(:private_error) { true }
+
+      before do
+        allow(instance).to receive(:inspect)
+        allow(instance).to receive(:foo).and_return(inner_service_success)
+        allow(instance).to receive(:bar).and_return(inner_service_success)
+
+        service.before_error { inspect }
+
+        instance.()
+      end
+
+      it { expect(instance).to have_received(:inspect).once }
+    end
   end
 end
