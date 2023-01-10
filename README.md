@@ -1,6 +1,6 @@
 # Stimpack 💉
 
-Supporting libraries for NydusNetwork. Stimpack consists of a number of well
+Building blocks for service objects. Stimpack consists of a number of well
 tested building blocks which can be used independently, or be combined at the
 application level to build systems with consistent, well-defined interfaces
 and behaviour.
