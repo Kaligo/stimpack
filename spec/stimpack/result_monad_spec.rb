@@ -126,16 +126,26 @@ RSpec.describe Stimpack::ResultMonad do
       allow(accumulator).to receive(:parent_callback)
 
       service.blank_result
-      service.before_error { accumulator.callback }
-
-      super_klass.before_error { accumulator.parent_callback }
-
-      instance.error_result(errors: ["foo"])
     end
 
     it "runs the callbacks up the class hierarchy" do
-      expect(accumulator).to have_received(:callback).ordered
-      expect(accumulator).to have_received(:parent_callback).ordered
+      service.before_error { accumulator.callback }
+      super_klass.before_error { accumulator.parent_callback }
+      instance.error_result(errors: ["foo"])
+
+      expect(accumulator).to have_received(:callback).with(no_args).ordered
+      expect(accumulator).to have_received(:parent_callback).with(no_args).ordered
+    end
+
+    context "when the callback receives arguments" do
+      it "passes the arguments to the callback" do
+        service.before_error { |errors| accumulator.callback(errors) }
+        super_klass.before_error { |errors| accumulator.parent_callback(errors) }
+        instance.error_result(errors: "foo")
+
+        expect(accumulator).to have_received(:callback).with("foo")
+        expect(accumulator).to have_received(:parent_callback).with("foo")
+      end
     end
   end
 
