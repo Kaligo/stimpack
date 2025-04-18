@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.3
+
+### New features
+
+- Add argument support for `ResultMonad` callbacks (`before_error`), allowing callbacks to receive the result data or errors as arguments.
+
 ## 0.9.2
 
 ### Bug fixes

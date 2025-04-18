@@ -145,7 +145,7 @@ module Stimpack
     # To be called from within an object when its invocation fails.
     #
     def error(errors:)
-      run_callback(:error)
+      run_callback(:error, errors)
 
       self.class.result_struct.new(klass: self.class, errors: errors)
     end
@@ -173,11 +173,11 @@ module Stimpack
       MESSAGE
     end
 
-    def run_callback(name)
+    def run_callback(name, *args)
       self.class.ancestors.each do |ancestor|
         callback = self.class.callbacks["#{ancestor}.#{name}"]
 
-        instance_exec(&callback) if callback.respond_to?(:call)
+        instance_exec(*args, &callback) if callback.respond_to?(:call)
       end
     end
   end
